@@ -31,27 +31,30 @@ module ForemanAnsibleCore
       private
 
       def read_roles(roles_path)
-        logger.info('[foreman_ansible] - Reading roles from '\
-                    "/etc/ansible/ansible.cfg #{roles_path}")
-        Dir.glob("#{roles_path}/*").map do |path|
-          path.split('/').last
+        rescue_and_raise_file_exception ReadRolesException,
+                                        roles_path, 'roles' do
+          Dir.glob("#{roles_path}/*").map do |path|
+            path.split('/').last
+          end
         end
-      rescue Errno::ENOENT, Errno::EACCES => e
-        logger.debug("[foreman_ansible] - #{e.backtrace}")
-        exception_message = '[foreman_ansible] - Could not read Ansible roles'\
-                            " from #{roles_path} - #{e.message}"
-        raise ReadConfigFileException.new(exception_message)
       end
 
       def roles_path_from_config
-        File.readlines(DEFAULT_CONFIG_FILE).select do |line|
-          line =~ /roles_path/
+        rescue_and_raise_file_exception ReadConfigFileException,
+                                        DEFAULT_CONFIG_FILE, 'config file' do
+          File.readlines(DEFAULT_CONFIG_FILE).select do |line|
+            line =~ /roles_path/
+          end
         end
+      end
+
+      def rescue_and_raise_file_exception(exception, path, type)
+        yield
       rescue Errno::ENOENT, Errno::EACCES => e
-        logger.debug("[foreman_ansible] - #{e.backtrace}")
-        exception_message = '[foreman_ansible] - Could not read Ansible config'\
-          " file #{DEFAULT_CONFIG_FILE} - #{e.message}"
-        raise ReadConfigFileException.new(exception_message)
+        logger.debug(e.backtrace)
+        exception_message = "Could not read Ansible #{type} "\
+                            "#{path} - #{e.message}"
+        raise exception.new(exception_message)
       end
     end
   end

@@ -51,18 +51,18 @@ class RolesReaderTest < ActiveSupport::TestCase
 
       test 'handles "No such file or dir" with exception' do
         Dir.expects(:glob).with("#{ROLES_PATH}/*").raises(Errno::ENOENT)
-        ex = assert_raises(ForemanAnsibleCore::ReadConfigFileException) do
+        ex = assert_raises(ForemanAnsibleCore::ReadRolesException) do
           ForemanAnsibleCore::RolesReader.list_roles
         end
-        assert_match(/Could not read Ansible roles from/, ex.message)
+        assert_match(/Could not read Ansible roles/, ex.message)
       end
 
       test 'raises error if the roles path is not readable' do
         Dir.expects(:glob).with("#{ROLES_PATH}/*").raises(Errno::EACCES)
-        ex = assert_raises(ForemanAnsibleCore::ReadConfigFileException) do
+        ex = assert_raises(ForemanAnsibleCore::ReadRolesException) do
           ForemanAnsibleCore::RolesReader.list_roles
         end
-        assert_match(/Could not read Ansible roles from/, ex.message)
+        assert_match(/Could not read Ansible roles/, ex.message)
       end
     end
 
