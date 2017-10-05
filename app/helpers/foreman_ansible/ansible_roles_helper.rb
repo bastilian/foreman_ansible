@@ -18,7 +18,9 @@ module ForemanAnsible
     end
 
     def ansible_proxy_import(hash)
-      select_action_button(_('Import'), {:class => 'roles-import'}, ansible_proxy_links(hash))
+      select_action_button(_('Import'),
+                           { :primary => true, :class => 'roles-import' },
+                           ansible_proxy_links(hash))
     end
 
     def import_time(role)
