@@ -5,10 +5,11 @@ class AnsibleRolesController < ::ApplicationController
   before_action :find_resource, :only => [:destroy]
   before_action :find_proxy, :only => [:import]
   before_action :create_importer, :only => [:import, :confirm_import]
+  before_action :default_order, :only => [:index]
 
   def index
     @ansible_roles = resource_base.search_for(params[:search],
-                                              :order => params[:order]).
+                                              :order => ()).
                      paginate(:page => params[:page],
                               :per_page => params[:per_page])
   end
@@ -38,6 +39,10 @@ class AnsibleRolesController < ::ApplicationController
   end
 
   private
+
+  def default_order
+    params[:order] ||= 'name ASC'
+  end
 
   def find_proxy
     return nil unless params[:proxy]
