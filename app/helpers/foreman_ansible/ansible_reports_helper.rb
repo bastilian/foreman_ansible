@@ -3,17 +3,17 @@ module ForemanAnsible
   # modifies them to be properly presented in views
   module AnsibleReportsHelper
     def module_name(log)
-      JSON.parse(log.source.value)['module_name']
+      log.source.value.split(':')[0].strip
     end
 
     def module_args(log)
-      JSON.parse(log.source.value)['module_args']
+      parsed_message_json(log).fetch('invocation', {}).fetch('module_args', {})
     end
 
     def ansible_module_message(log)
       paragraph_style = 'margin:0px;font-family:Menlo,Monaco,Consolas,monospace'
       safe_join(
-        JSON.parse(log.message.value).except('invocation').map do |name, value|
+        parsed_message_json(log).except('invocation').map do |name, value|
           next if value.blank?
           content_tag(:p, "#{name}: #{value}", :style => paragraph_style)
         end
@@ -22,7 +22,12 @@ module ForemanAnsible
 
     def ansible_report?(log)
       module_name(log).present?
-      # Failures when parsing the log indicates it's not an Ansible report
+    end
+
+    private
+
+    def parsed_message_json(log)
+      JSON.parse(log.message.value)
     rescue StandardError
       false
     end
