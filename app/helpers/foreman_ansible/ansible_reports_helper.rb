@@ -24,6 +24,10 @@ module ForemanAnsible
       module_name(log).present?
     end
 
+    def ansible_report_origin_icon
+      'foreman_ansible/Ansible.png'
+    end
+
     private
 
     def parsed_message_json(log)

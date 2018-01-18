@@ -134,7 +134,6 @@ module ForemanAnsible
           )
         end
         ::FactParser.register_fact_parser(:ansible, ForemanAnsible::FactParser)
-        ::ConfigReport.send(:include, ForemanAnsible::ConfigReportExtensions)
         ::Host::Managed.send(:include, ForemanAnsible::HostManagedExtensions)
         ::Hostgroup.send(:include, ForemanAnsible::HostgroupExtensions)
         ::HostsHelper.send(:include, ForemanAnsible::HostsHelperExtensions)
@@ -150,6 +149,8 @@ module ForemanAnsible
         ::Api::V2::HostgroupsController.send(
           :include, ForemanAnsible::Api::V2::HostgroupsControllerExtensions
         )
+
+        ReportImporter.register_report_scanner ForemanAnsible::AnsibleReportScanner
       rescue StandardError => e
         Rails.logger.warn "Foreman Ansible: skipping engine hook (#{e})"
       end
