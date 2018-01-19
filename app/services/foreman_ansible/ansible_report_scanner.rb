@@ -1,4 +1,6 @@
 module ForemanAnsible
+  # Scans ConfigReports after import for indicators of an Ansible report and
+  # sets the origin of the report to 'Ansible'
   class AnsibleReportScanner
     class << self
       def scan(report)
