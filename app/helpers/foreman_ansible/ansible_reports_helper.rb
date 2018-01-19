@@ -28,6 +28,10 @@ module ForemanAnsible
       'foreman_ansible/Ansible.png'
     end
 
+    def ansible_report_origin_partial
+      'foreman_ansible/config_reports/ansible'
+    end
+
     private
 
     def parsed_message_json(log)
