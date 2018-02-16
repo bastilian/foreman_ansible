@@ -4,10 +4,10 @@ module ForemanAnsible
   module AnsibleReportsHelper
     ANSIBLE_META_KEYS = %w[
       _ansible_parsed _ansible_no_log _ansible_item_result
-      _ansible_ignore_errors _ansible_verbose_always
+      _ansible_ignore_errors _ansible_verbose_always _ansible_verbose_override
     ].freeze
     ANSIBLE_HIDDEN_KEYS = %w[
-      invocation module_args results
+      invocation module_args results stdout_lines stderr_lines stdout stderr ansible_facts
     ].freeze
 
     def module_name(log)
@@ -52,7 +52,7 @@ module ForemanAnsible
       prettyp.gsub!(/},*\n*/, "\n")
       prettyp.gsub!(/^(\[|\])/, '')
       prettyp.gsub!(/^[\s]*$\n/, '')
-      paragraph_style = 'white-space:pre;padding: 2em 0'
+      paragraph_style = 'white-space:pre'
       content_tag(:p, prettyp, :style => paragraph_style)
     end
 
